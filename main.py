@@ -4,6 +4,7 @@ import itertools
 import random
 import string
 import time
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from time import sleep
 from typing import Union, Generator, Iterable, Tuple, List, Dict, Set
 from uuid import uuid4
@@ -228,3 +229,19 @@ if __name__ == '__main__':
     assert str(grouped_by_key) == "[(1, ('a',)), (2, ('b', 'c'))]"
 
     assert str(list(itertools.product([1, 2], repeat=2))) == "[(1, 1), (1, 2), (2, 1), (2, 2)]"
+
+    # results = []
+    now = time.time()
+    with ProcessPoolExecutor(8) as executor:
+        for i in range(8):
+            future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
+            # results.append(future.result())
+    print(f'Process Job Done! {time.time() - now:2f} sec')
+
+    # results = []
+    now = time.time()
+    with ThreadPoolExecutor(8) as executor:
+        for i in range(8):
+            future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
+            # results.append(future.result())
+    print(f'Threads Job Done! {time.time() - now:2f} sec')
