@@ -2,9 +2,30 @@ import datetime
 import functools
 import random
 import string
+import time
+from ctypes import sizeof
+from decimal import Decimal
 from time import sleep
 from typing import Union, Generator, Iterable, Tuple, List, Dict, Set
 from uuid import uuid4
+
+
+def timeit_results(func: callable) -> callable:
+    # series = []
+
+    @functools.wraps(func)
+    def inner(*args, **kwargs):
+        # nonlocal series
+        now = time.time()
+        # sleep(1)
+        result = func(*args, **kwargs)
+        result_time: float = time.time() - now
+        # series.append(result_time)
+        arguments = ', '.join([str(x) for x in args] + [f'{k}:{v}' for k, v in kwargs.items()])
+        print(f'Func: {func.__name__}({arguments}): {result_time:2f}s')
+        return result
+
+    return inner
 
 
 def elapsed_time(func: callable) -> callable:
@@ -93,23 +114,33 @@ class Graph:
         self._graph: Dict[str, set] = {}
         self._build_graph()
 
+    @timeit_results
     def add_point(self, point: Tuple[str, str]) -> None:
         links: set = self._graph.get(point[0])
         links.add(point[1])
 
+    @timeit_results
     def remove_point(self, name: str) -> None:
         self._graph.pop(name)
 
+    @timeit_results
     def remove_link(self, name: str, link: str) -> None:
         links: Set = self._graph.get(name)
         links.remove(link)
 
+    @timeit_results
     def _build_graph(self):
         self._graph.clear()
         [self._graph.update({name: set(links.split())}) for name, links in self._points]
 
     def __repr__(self):
         return f'{self._graph}'
+
+
+@timeit_results
+# @functools.lru_cache(24)
+def big_job(stop: int = 0, stype: str = 'tuple'):
+    return eval(f'{stype}(x for x in range({stop}))')
 
 
 if __name__ == '__main__':
@@ -142,3 +173,10 @@ if __name__ == '__main__':
     print(graph)
     graph.remove_link('A', 'B')
     print(graph)
+
+    sleep(10)
+    big_job(100000000, 'tuple')
+    sleep(10)
+    big_job(100000000, 'set')
+    sleep(10)
+    big_job(100000000, 'list')
