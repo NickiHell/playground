@@ -1,13 +1,30 @@
 import datetime
 import functools
+import itertools
 import random
 import string
 import time
-from ctypes import sizeof
-from decimal import Decimal
 from time import sleep
 from typing import Union, Generator, Iterable, Tuple, List, Dict, Set
 from uuid import uuid4
+
+
+class SingletonMeta:
+    instance = None
+
+    def __new__(cls):
+        if not cls.instance:
+            cls.instance = super().__new__(cls)
+        return cls.instance
+
+
+class TestClass:
+    instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls.instance:
+            cls.instance = super().__new__(cls)
+        return cls.instance
 
 
 def timeit_results(func: callable) -> callable:
@@ -174,9 +191,40 @@ if __name__ == '__main__':
     graph.remove_link('A', 'B')
     print(graph)
 
-    sleep(10)
-    big_job(100000000, 'tuple')
-    sleep(10)
-    big_job(100000000, 'set')
-    sleep(10)
-    big_job(100000000, 'list')
+    big_job(10000000, 'set')
+
+    a = TestClass()
+    b = TestClass()
+
+    assert a is b
+
+    assert list(itertools.chain([1, 2], [3, 4])) == [1, 2, 3, 4]
+    assert sum([sum(y) for y in itertools.tee(big_job(5, 'set'), 5)]) == 50
+    counter = itertools.count(0, 10)
+    val = next(counter)
+    assert val == 0
+    val = next(counter)
+    assert val == 10
+
+    assert list(itertools.combinations_with_replacement('AB', r=2)) == [('A', 'A'), ('A', 'B'), ('B', 'B')]
+    assert list(itertools.dropwhile(len, ('1', '2', ''))) == ['']
+    assert list(itertools.combinations('AB', r=2)) == [('A', 'B')]
+    data = {
+        'a': {
+            'key': 1,
+            'data': set(string.ascii_letters.upper()),
+        },
+        'b': {
+            'key': 2,
+            'data': set(string.ascii_letters.lower()),
+        },
+        'c': {
+            'key': 2,
+            'data': set(string.ascii_letters.lower()),
+        },
+    }
+
+    grouped_by_key = [(x, tuple(y)) for x, y in itertools.groupby(data, key=lambda x: data[x]['key'])]
+    assert str(grouped_by_key) == "[(1, ('a',)), (2, ('b', 'c'))]"
+
+    assert str(list(itertools.product([1, 2], repeat=2))) == "[(1, 1), (1, 2), (2, 1), (2, 2)]"
