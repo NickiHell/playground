@@ -2,7 +2,8 @@ import datetime
 import functools
 import random
 from time import sleep
-from typing import Union, Generator
+from typing import Union, Generator, Iterable, Tuple
+from uuid import uuid4
 
 
 def elapsed_time(func: callable) -> callable:
@@ -55,6 +56,30 @@ def my_gen(start, stop=None, step=None) -> Generator[int]:
     while current < stop:
         yield current
         current += step or 1
+
+
+class TreeNode:
+    def __init__(self, info: str) -> None:
+        self._id: uuid4 = str(uuid4())
+        self.info: str = info
+
+
+class Tree:
+    def __init__(self, nodes: Iterable[TreeNode]) -> None:
+        self._raw_nodes: Iterable[TreeNode] = nodes
+        self._tree = None
+
+    def add_node(self, node: TreeNode) -> None:
+        pass
+
+    def remove_node(self, node: TreeNode) -> None:
+        pass
+
+    def search_node_by_info(self, info: str) -> Tuple[uuid4, str]:
+        pass
+
+    def _build_tree(self):
+        pass
 
 
 if __name__ == '__main__':
