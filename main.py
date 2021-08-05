@@ -1,13 +1,18 @@
 import datetime
 import functools
 import itertools
+import os
 import random
 import string
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from multiprocessing import Process, Queue
 from time import sleep
-from typing import Union, Generator, Iterable, Tuple, List, Dict, Set
+from typing import (Any, Callable, Dict, Generator, Iterable, List, Optional,
+                    Set, Tuple, Union)
 from uuid import uuid4
+
+from loguru import logger
 
 
 class SingletonMeta:
@@ -28,7 +33,7 @@ class TestClass:
         return cls.instance
 
 
-def timeit_results(func: callable) -> callable:
+def timeit_results(func: Callable) -> Callable:
     # series = []
 
     @functools.wraps(func)
@@ -46,7 +51,7 @@ def timeit_results(func: callable) -> callable:
     return inner
 
 
-def elapsed_time(func: callable) -> callable:
+def elapsed_time(func: Callable) -> Callable:
     elapsed_time: Union[datetime.datetime, None] = None
 
     @functools.wraps(func)
@@ -100,7 +105,7 @@ def my_gen(start, stop=None, step=None) -> Generator:
 
 class TreeNode:
     def __init__(self, info: str) -> None:
-        self._id: uuid4 = str(uuid4())
+        self._id: str = str(uuid4())
         self._parent: Union[TreeNode, None] = None
         self.info: str = info
 
@@ -134,7 +139,7 @@ class Graph:
 
     @timeit_results
     def add_point(self, point: Tuple[str, str]) -> None:
-        links: set = self._graph.get(point[0])
+        links: Optional[Set[Any]] = self._graph.get(point[0])
         links.add(point[1])
 
     @timeit_results
@@ -143,7 +148,7 @@ class Graph:
 
     @timeit_results
     def remove_link(self, name: str, link: str) -> None:
-        links: Set = self._graph.get(name)
+        links: Optional[Set[Any]] = self._graph.get(name)
         links.remove(link)
 
     @timeit_results
@@ -159,6 +164,17 @@ class Graph:
 # @functools.lru_cache(24)
 def big_job(stop: int = 0, stype: str = 'tuple'):
     return eval(f'{stype}(x for x in range({stop}))')
+
+
+def infinite_job(queue: Queue, name: str) -> None:
+    while True:
+        sleep(1)
+        if name == 'producer':
+            number: int = random.randint(0, 999)
+            queue.put(number)
+        else:
+            pass
+            logger.info(f'Consumer -> {os.getpid()} get: {queue.get()}')
 
 
 if __name__ == '__main__':
@@ -231,17 +247,30 @@ if __name__ == '__main__':
     assert str(list(itertools.product([1, 2], repeat=2))) == "[(1, 1), (1, 2), (2, 1), (2, 2)]"
 
     # results = []
-    now = time.time()
-    with ProcessPoolExecutor(8) as executor:
-        for i in range(8):
-            future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
-            # results.append(future.result())
-    print(f'Process Job Done! {time.time() - now:2f} sec')
+    # now = time.time()
+    # with ProcessPoolExecutor(8) as executor:
+    #     for i in range(8):
+    #         future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
+    #         # results.append(future.result())
+    # print(f'Process Job Done! {time.time() - now:2f} sec')
+    #
+    # # results = []
+    # now = time.time()
+    # with ThreadPoolExecutor(8) as executor:
+    #     for i in range(8):
+    #         future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
+    #         # results.append(future.result())
+    # print(f'Threads Job Done! {time.time() - now:2f} sec')
 
-    # results = []
-    now = time.time()
-    with ThreadPoolExecutor(8) as executor:
-        for i in range(8):
-            future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
-            # results.append(future.result())
-    print(f'Threads Job Done! {time.time() - now:2f} sec')
+    q = Queue(maxsize=64)
+    p1 = Process(name='producer', target=infinite_job, args=(q, 'producer'))
+    p1.start()
+    # [Process(name='consumer', target=infinite_job, args=(q, 'consumer')).start() for x in range(15)]
+    proc_array: Dict = {
+        '1': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+        '2': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+        '3': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+    }
+    for _, value in proc_array.items():
+        value.start()
+
