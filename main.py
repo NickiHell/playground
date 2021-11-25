@@ -6,13 +6,12 @@ import random
 import string
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from loguru import logger
 from multiprocessing import Process, Queue
 from time import sleep
 from typing import (Any, Callable, Dict, Generator, Iterable, List, Optional,
                     Set, Tuple, Union)
 from uuid import uuid4
-
-from loguru import logger
 
 
 class SingletonMeta:
@@ -177,6 +176,18 @@ def infinite_job(queue: Queue, name: str) -> None:
             logger.info(f'Consumer -> {os.getpid()} get: {queue.get()}')
 
 
+class A:
+    def exec(self):
+        print()
+
+
+class B:
+    a = A()
+
+    def __call__(self, *args, **kwargs):
+        self.a.exec()
+
+
 if __name__ == '__main__':
     assert test1.elapsed_time is None
     assert test1('1', '2') == '1 2'
@@ -246,31 +257,32 @@ if __name__ == '__main__':
 
     assert str(list(itertools.product([1, 2], repeat=2))) == "[(1, 1), (1, 2), (2, 1), (2, 2)]"
 
+    results = []
+    now = time.time()
+    with ProcessPoolExecutor(8) as executor:
+        for i in range(8):
+            future = executor.submit(big_job, 100000, random.choice(('set', 'tuple', 'list')))
+            # results.append(future.result())
+    print(f'Process Job Done! {time.time() - now:2f} sec')
+
     # results = []
-    # now = time.time()
-    # with ProcessPoolExecutor(8) as executor:
-    #     for i in range(8):
-    #         future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
-    #         # results.append(future.result())
-    # print(f'Process Job Done! {time.time() - now:2f} sec')
-    #
-    # # results = []
-    # now = time.time()
-    # with ThreadPoolExecutor(8) as executor:
-    #     for i in range(8):
-    #         future = executor.submit(big_job, 10000000, random.choice(('set', 'tuple', 'list')))
-    #         # results.append(future.result())
-    # print(f'Threads Job Done! {time.time() - now:2f} sec')
+    now = time.time()
+    with ThreadPoolExecutor(8) as executor:
+        for i in range(8):
+            future = executor.submit(big_job, 100000, random.choice(('set', 'tuple', 'list')))
+            # results.append(future.result())
+    print(f'Threads Job Done! {time.time() - now:2f} sec')
 
-    q = Queue(maxsize=64)
-    p1 = Process(name='producer', target=infinite_job, args=(q, 'producer'))
-    p1.start()
-    # [Process(name='consumer', target=infinite_job, args=(q, 'consumer')).start() for x in range(15)]
-    proc_array: Dict = {
-        '1': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-        '2': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-        '3': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-    }
-    for _, value in proc_array.items():
-        value.start()
+    # q = Queue(maxsize=64)
+    # p1 = Process(name='producer', target=infinite_job, args=(q, 'producer'))
+    # p1.start()
+    # proc_array: Dict = {
+    #     '1': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+    #     '2': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+    #     '3': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+    # }
+    # for _, value in proc_array.items():
+    #     value.start()
 
+    b = B()
+    b()
