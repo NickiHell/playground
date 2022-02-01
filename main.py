@@ -6,15 +6,16 @@ import random
 import string
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from loguru import logger
-from multiprocessing import Process, Queue
+from multiprocessing import Queue
 from time import sleep
 from typing import (Any, Callable, Dict, Generator, Iterable, List, Optional,
                     Set, Tuple, Union)
 from uuid import uuid4
 
+from loguru import logger
 
-class SingletonMeta:
+
+class Singleton:
     instance = None
 
     def __new__(cls):
@@ -286,3 +287,14 @@ if __name__ == '__main__':
 
     b = B()
     b()
+
+
+    def enumerate1(xss: Iterable):
+        counter = 0
+        for item in xss:
+            yield counter, item
+            counter += 1
+
+
+    a = (1, 2, 3)
+    print([(x, y) for x, y in enumerate1(a)])

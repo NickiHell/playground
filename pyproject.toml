@@ -5,17 +5,17 @@ description = ""
 authors = ["NickiHell <nickihell@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 loguru = "*"
 
 [tool.poetry.dev-dependencies]
-classes = "*"
 mypy = "*"
 isort = "*"
 taskipy = "*"
 flakehell = "*"
 wemake-python-styleguide = "*"
 flake8-functions = "*"
+ipython = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
