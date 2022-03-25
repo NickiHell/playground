@@ -6,7 +6,7 @@ import random
 import string
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from multiprocessing import Queue
+from multiprocessing import Queue, Process
 from time import sleep
 from typing import (Any, Callable, Dict, Generator, Iterable, List, Optional,
                     Set, Tuple, Union)
@@ -274,16 +274,16 @@ if __name__ == '__main__':
             # results.append(future.result())
     print(f'Threads Job Done! {time.time() - now:2f} sec')
 
-    # q = Queue(maxsize=64)
-    # p1 = Process(name='producer', target=infinite_job, args=(q, 'producer'))
-    # p1.start()
-    # proc_array: Dict = {
-    #     '1': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-    #     '2': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-    #     '3': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
-    # }
-    # for _, value in proc_array.items():
-    #     value.start()
+    q = Queue(maxsize=64)
+    p1 = Process(name='producer', target=infinite_job, args=(q, 'producer'))
+    p1.start()
+    proc_array: Dict = {
+        '1': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+        '2': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+        '3': Process(name='consumer', target=infinite_job, args=(q, 'consumer')),
+    }
+    for _, value in proc_array.items():
+        value.start()
 
     b = B()
     b()
