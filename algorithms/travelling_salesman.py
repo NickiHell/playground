@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 
 def brute_force_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
@@ -26,21 +26,21 @@ def brute_force_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
         return 0, []
 
     # Все перестановки городов (начинаются с 0)
-    min_cost = float('inf')
-    best_path = None
+    min_cost = float("inf")
+    best_path: List[int] | None = None
 
     for perm in itertools.permutations(range(1, n)):
         path = [0] + list(perm) + [0]
-        cost = 0
+        cost = 0.0
 
         for i in range(len(path) - 1):
-            cost += distances[path[i]][path[i+1]]
+            cost += distances[path[i]][path[i + 1]]
 
         if cost < min_cost:
             min_cost = cost
             best_path = path
 
-    return min_cost, best_path
+    return min_cost, best_path or []
 
 
 def nearest_neighbor_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
@@ -69,7 +69,7 @@ def nearest_neighbor_tsp(distances: List[List[float]]) -> Tuple[float, List[int]
     unvisited = set(range(1, n))
     current_city = 0
     path = [0]
-    total_cost = 0
+    total_cost = 0.0
 
     while unvisited:
         nearest_city = min(unvisited, key=lambda city: distances[current_city][city])
@@ -109,7 +109,7 @@ def dynamic_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
         return 0, []
 
     # dp[mask][i] - минимальная стоимость пути, который посещает города в mask и заканчивается в городе i
-    dp = [[float('inf')] * n for _ in range(1 << n)]
+    dp = [[float("inf")] * n for _ in range(1 << n)]
     parent = [[-1] * n for _ in range(1 << n)]
 
     # Начинаем с города 0
@@ -133,7 +133,7 @@ def dynamic_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
 
     # Находим минимальную стоимость возвращения в начальный город
     final_mask = (1 << n) - 1
-    min_cost = float('inf')
+    min_cost = float("inf")
     last_city = -1
 
     for i in range(1, n):
@@ -149,7 +149,7 @@ def dynamic_tsp(distances: List[List[float]]) -> Tuple[float, List[int]]:
     while current != -1:
         path.append(current)
         next_current = parent[mask][current]
-        mask ^= (1 << current)
+        mask ^= 1 << current
         current = next_current
 
     path.reverse()

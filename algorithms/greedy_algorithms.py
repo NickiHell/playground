@@ -2,7 +2,7 @@ def activity_selection(activities):
     """
     Жадный алгоритм выбора активностей
 
-    Выбирает максимальное количество непересекающихся активностей, 
+    Выбирает максимальное количество непересекающихся активностей,
     у которых время окончания меньше или равно времени начала следующей.
 
     Сложность: O(n log n) - из-за сортировки
@@ -56,7 +56,7 @@ def fractional_knapsack(items, capacity):
         (240.0, [('A', 10), ('B', 20), ('C', 20)])
     """
     # Сортируем по соотношению ценности к весу (убывающим)
-    sorted_items = sorted(items, key=lambda x: x[1]/x[0], reverse=True)
+    sorted_items = sorted(items, key=lambda x: x[1] / x[0], reverse=True)
 
     total_value = 0
     selected_items = []

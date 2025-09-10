@@ -176,13 +176,13 @@ def dijkstra(graph, start, finish):
         if node == start:
             costs[node] = 0
         else:
-            costs[node] = float('inf')
+            costs[node] = float("inf")
         parents[node] = None
 
     processed = []
 
     def find_lowest_cost_node():
-        lowest_cost = float('inf')
+        lowest_cost = float("inf")
         lowest_cost_node = None
 
         for node in costs:
@@ -210,7 +210,7 @@ def dijkstra(graph, start, finish):
         node = find_lowest_cost_node()
 
     # Восстановление пути
-    if costs[finish] == float('inf'):
+    if costs[finish] == float("inf"):
         return None, None
 
     path = []

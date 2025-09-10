@@ -2,22 +2,22 @@ import unittest
 import time
 import random
 from algorithms.base_algorithms import (
-    binary_search, 
-    selection_sort, 
+    binary_search,
+    selection_sort,
     quicksort,
     dijkstra,
-    breadth_first_search
+    breadth_first_search,
 )
 from algorithms.greedy_algorithms import (
     activity_selection,
     fractional_knapsack,
-    coin_change_greedy
+    coin_change_greedy,
 )
 from algorithms.divide_and_conquer import (
     merge_sort,
     power,
     max_subarray_sum,
-    find_peak_element
+    find_peak_element,
 )
 from algorithms.trees import (
     TreeNode,
@@ -27,17 +27,16 @@ from algorithms.trees import (
     level_order_traversal,
     tree_height,
     is_balanced,
-    search_in_bst
+    search_in_bst,
 )
 from algorithms.travelling_salesman import (
     brute_force_tsp,
     nearest_neighbor_tsp,
-    dynamic_tsp
+    dynamic_tsp,
 )
 
 
 class TestBaseAlgorithms(unittest.TestCase):
-
     def test_binary_search(self):
         arr = [1, 3, 5, 7, 9]
         self.assertEqual(binary_search(arr, 3), 1)
@@ -54,15 +53,15 @@ class TestBaseAlgorithms(unittest.TestCase):
         self.assertEqual(quicksort(arr), expected)
 
     def test_dijkstra(self):
-        graph = {'A': {'B': 5, 'C': 2}, 'B': {'D': 4}, 'C': {'B': 8, 'D': 6}}
-        distance, path = dijkstra(graph, 'A', 'D')
+        graph = {"A": {"B": 5, "C": 2}, "B": {"D": 4}, "C": {"B": 8, "D": 6}}
+        distance, path = dijkstra(graph, "A", "D")
         self.assertEqual(distance, 11)
-        self.assertEqual(path, ['A', 'C', 'D'])
+        self.assertEqual(path, ["A", "C", "D"])
 
     def test_breadth_first_search(self):
-        graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E']}
-        self.assertTrue(breadth_first_search(graph, 'A', 'E'))
-        self.assertFalse(breadth_first_search(graph, 'A', 'F'))
+        graph = {"A": ["B", "C"], "B": ["D"], "C": ["E"]}
+        self.assertTrue(breadth_first_search(graph, "A", "E"))
+        self.assertFalse(breadth_first_search(graph, "A", "F"))
 
     def test_binary_search_performance(self):
         # Тест скорости для большого массива
@@ -94,14 +93,13 @@ class TestBaseAlgorithms(unittest.TestCase):
 
 
 class TestGreedyAlgorithms(unittest.TestCase):
-
     def test_activity_selection(self):
-        activities = [(1, 4, 'A'), (3, 5, 'B'), (0, 6, 'C'), (5, 7, 'D')]
+        activities = [(1, 4, "A"), (3, 5, "B"), (0, 6, "C"), (5, 7, "D")]
         selected = activity_selection(activities)
         self.assertEqual(len(selected), 2)
 
     def test_fractional_knapsack(self):
-        items = [(10, 60, 'A'), (20, 100, 'B'), (30, 120, 'C')]
+        items = [(10, 60, "A"), (20, 100, "B"), (30, 120, "C")]
         value, selected = fractional_knapsack(items, 50)
         self.assertEqual(value, 240.0)
 
@@ -112,7 +110,6 @@ class TestGreedyAlgorithms(unittest.TestCase):
 
 
 class TestDivideAndConquerAlgorithms(unittest.TestCase):
-
     def test_merge_sort(self):
         arr = [64, 34, 25, 12, 22, 11, 90]
         expected = [11, 12, 22, 25, 34, 64, 90]
@@ -132,7 +129,6 @@ class TestDivideAndConquerAlgorithms(unittest.TestCase):
 
 
 class TestTreeAlgorithms(unittest.TestCase):
-
     def setUp(self):
         # Создаем тестовое дерево:
         #       1
@@ -194,27 +190,16 @@ class TestTreeAlgorithms(unittest.TestCase):
 
 
 class TestTravellingSalesman(unittest.TestCase):
-
     def test_brute_force_tsp(self):
         # Тестовая матрица расстояний для 4 городов
-        distances = [
-            [0, 10, 15, 20],
-            [10, 0, 35, 25],
-            [15, 35, 0, 30],
-            [20, 25, 30, 0]
-        ]
+        distances = [[0, 10, 15, 20], [10, 0, 35, 25], [15, 35, 0, 30], [20, 25, 30, 0]]
 
         cost, path = brute_force_tsp(distances)
         self.assertEqual(cost, 80)
         self.assertEqual(len(path), 5)  # Путь должен включать начало и конец
 
     def test_nearest_neighbor_tsp(self):
-        distances = [
-            [0, 10, 15, 20],
-            [10, 0, 35, 25],
-            [15, 35, 0, 30],
-            [20, 25, 30, 0]
-        ]
+        distances = [[0, 10, 15, 20], [10, 0, 35, 25], [15, 35, 0, 30], [20, 25, 30, 0]]
 
         cost, path = nearest_neighbor_tsp(distances)
         self.assertEqual(len(path), 5)
@@ -223,17 +208,12 @@ class TestTravellingSalesman(unittest.TestCase):
         self.assertEqual(path[-1], 0)
 
     def test_dynamic_tsp(self):
-        distances = [
-            [0, 10, 15, 20],
-            [10, 0, 35, 25],
-            [15, 35, 0, 30],
-            [20, 25, 30, 0]
-        ]
+        distances = [[0, 10, 15, 20], [10, 0, 35, 25], [15, 35, 0, 30], [20, 25, 30, 0]]
 
         cost, path = dynamic_tsp(distances)
         self.assertEqual(cost, 80)
         self.assertEqual(len(path), 5)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

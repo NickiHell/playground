@@ -1,5 +1,6 @@
 class TreeNode:
     """Узел бинарного дерева"""
+
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
@@ -180,7 +181,7 @@ def is_balanced(root):
     """
     Проверка баланса дерева
 
-    Дерево считается сбалансированным, если разница высот поддеревьев 
+    Дерево считается сбалансированным, если разница высот поддеревьев
     для каждого узла не превышает 1.
 
     Сложность: O(n^2) в худшем случае, O(n) в среднем случае
@@ -198,6 +199,7 @@ def is_balanced(root):
         >>> is_balanced(root)
         True
     """
+
     def check_height(node):
         if not node:
             return 0
@@ -205,7 +207,11 @@ def is_balanced(root):
         left_height = check_height(node.left)
         right_height = check_height(node.right)
 
-        if left_height == -1 or right_height == -1 or abs(left_height - right_height) > 1:
+        if (
+            left_height == -1
+            or right_height == -1
+            or abs(left_height - right_height) > 1
+        ):
             return -1
 
         return max(left_height, right_height) + 1

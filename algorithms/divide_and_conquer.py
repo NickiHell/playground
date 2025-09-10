@@ -93,7 +93,7 @@ def max_subarray_sum(arr):
     """
     Максимальная сумма подмассива (алгоритм "разделяй и властвуй")
 
-    Находит максимальную сумму непустого подмассива с использованием 
+    Находит максимальную сумму непустого подмассива с использованием
     рекурсивного подхода: максимальная сумма либо в левой части, либо в правой,
     либо пересекает середину.
 
@@ -117,14 +117,14 @@ def max_subarray_sum(arr):
     right_sum = max_subarray_sum(arr[mid:])
 
     # Максимальная сумма, пересекающая середину
-    left_max = float('-inf')
+    left_max = float("-inf")
     current_sum = 0
 
     for i in range(mid - 1, -1, -1):
         current_sum += arr[i]
         left_max = max(left_max, current_sum)
 
-    right_max = float('-inf')
+    right_max = float("-inf")
     current_sum = 0
 
     for i in range(mid, len(arr)):
@@ -155,12 +155,14 @@ def find_peak_element(arr):
         >>> find_peak_element([1, 3, 20, 4, 1, 0])
         20
     """
+
     def peak_util(arr, low, high, n):
         mid = (low + high) // 2
 
         # Проверяем, является ли элемент пиком
-        if (mid == 0 or arr[mid - 1] <= arr[mid]) and \
-           (mid == n - 1 or arr[mid + 1] <= arr[mid]):
+        if (mid == 0 or arr[mid - 1] <= arr[mid]) and (
+            mid == n - 1 or arr[mid + 1] <= arr[mid]
+        ):
             return arr[mid]
 
         # Если левый сосед больше текущего, ищем в левой части
