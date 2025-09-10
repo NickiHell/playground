@@ -171,8 +171,13 @@ def dijkstra(graph, start, finish):
     costs = {}
     parents = {}
 
-    # Инициализация
-    for node in graph:
+    # Инициализация всех узлов графа
+    all_nodes = set(graph.keys())
+    for node in graph.values():
+        all_nodes.update(node.keys())
+
+    # Инициализация расстояний
+    for node in all_nodes:
         if node == start:
             costs[node] = 0
         else:
