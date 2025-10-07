@@ -1,0 +1,2 @@
+class CacheOverheadError(BaseException):
+    pass
